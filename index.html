@@ -25,7 +25,23 @@ footer{text-align:center;color:#a0aaba;font-size:9px;padding:24px 0 0}
 @media(max-width:600px){.app{display:block}aside{min-height:auto;height:64px;position:sticky;top:0;z-index:5;flex-direction:row;justify-content:space-around;padding:7px 10px;box-shadow:0 4px 15px #0b1a3022}.brand{padding:0;margin-right:auto}.brandname{display:block;font-size:15px}.brand small{display:block;font-size:7px}.mark{width:34px;height:34px}.nav{width:39px;height:42px;padding:8px;margin:0}.nav:nth-of-type(n+5){display:none}.nav .ico{font-size:16px}.topbar{margin-bottom:15px}.crumb{font-size:10px}.welcome{padding:21px 19px;border-radius:17px}.welcome:after{right:-30px;font-size:170px}.stats{gap:9px}.stat{padding:12px}.stat b{font-size:21px}.content{gap:12px}.card{padding:15px}.rightcol{grid-template-columns:1fr}.qtitle{font-size:15px}.filters{flex-wrap:wrap}.filters input{flex-basis:100%}main{padding:17px 13px 30px}}
 </style>
 </head>
-<body>
+<script type="module">
+  import { createClient } from
+    "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+
+  const SUPABASE_URL =
+    "https://evncennwrrtewoxibvvk.supabase.co";
+
+  const SUPABASE_KEY =
+    "sb_publishable_y7GyxgZuGVmNajjvPu440Q_gSTYi_1c";
+
+  window.mednexDB = createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+  console.log("MEDNEX database initialized");
+</script><body>
 <div class="app">
 <aside>
  <div class="brand"><div class="mark">M</div><div class="brandname">MEDNEX<small>MEDICAL LEARNING</small></div></div>
