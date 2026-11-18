@@ -1,1 +1,859 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#081426">
+<title>MEDNEX | Medical Learning Platform</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--bg:#071426;--panel:#0d1d33;--panel2:#122641;--line:#203956;--text:#edf5ff;--muted:#9db0c8;--blue:#4b91ff;--teal:#35d0bd;--red:#ff6b7d;--gold:#ffc96b;--shadow:0 18px 50px #0005}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(900px 500px at 85% -10%,#17436a55,transparent),var(--bg);color:var(--text);font:15px/1.55 Inter,system-ui,-apple-system,Segoe UI,sans-serif}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer;border:0}
+.hidden{display:none!important}
+.muted{color:var(--muted)}
+.small{font-size:12px}
+.brand{display:flex;align-items:center;gap:11px;font-weight:900;letter-spacing:1.5px;font-size:20px}
+.brandmark{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,var(--blue),var(--teal));display:grid;place-items:center;color:#061426;font-weight:1000}
+.wrap{max-width:1240px;margin:auto;padding:24px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:26px}
+.top-actions{display:flex;gap:10px;align-items:center}
+.btn{padding:10px 15px;border-radius:11px;background:var(--panel2);color:var(--text);border:1px solid var(--line);font-weight:700}
+.btn.primary{background:linear-gradient(100deg,var(--blue),#2676e7);border:0;color:white}
+.btn.teal{background:linear-gradient(100deg,#1ba998,var(--teal));color:#04201e;border:0}
+.btn.danger{color:#ff9aa7;border-color:#7b3544}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.card{background:linear-gradient(145deg,#10233b,#0b1a2e);border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:var(--shadow)}
+.auth{max-width:460px;margin:8vh auto}
+.auth h1{font-size:30px;margin:18px 0 4px}
+.field{display:grid;gap:6px;margin:12px 0}
+.field label{font-size:13px;color:#b9c9dc;font-weight:700}
+.field input,.field select,.field textarea,.toolbar input,.toolbar select{width:100%;padding:12px 13px;background:#08172a;border:1px solid #29415f;border-radius:10px;color:var(--text);outline:none}
+.field textarea{min-height:85px;resize:vertical}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--teal)}
+.tabs{display:flex;gap:7px;flex-wrap:wrap;margin:0 0 18px}
+.tab{padding:10px 15px;border-radius:10px;background:transparent;color:var(--muted);border:1px solid transparent}
+.tab.active{background:#163452;color:white;border-color:#2c587c}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:18px 0}
+.stat strong{font-size:27px;display:block}
+.stat span{color:var(--muted);font-size:13px}
+.grid{display:grid;grid-template-columns:1.15fr .85fr;gap:16px}
+.toolbar{display:flex;gap:9px;flex-wrap:wrap;margin:14px 0}
+.toolbar>*{flex:1;min-width:150px}
+.qcard{padding:17px;border:1px solid var(--line);border-radius:14px;background:#0b1a2c;margin:12px 0}
+.qmeta{display:flex;gap:8px;flex-wrap:wrap;color:var(--muted);font-size:12px;margin-bottom:8px}
+.pill{padding:3px 8px;border-radius:20px;background:#183654;color:#b9dcff}
+.qtext{font-size:16px;font-weight:750;margin:8px 0 12px}
+.option{display:flex;gap:10px;align-items:flex-start;padding:10px;border:1px solid #263f5c;border-radius:10px;margin:7px 0;background:#0c1d32}
+.option input{margin-top:5px;accent-color:var(--teal)}
+.feedback{padding:10px;border-radius:10px;margin-top:10px}
+.good{background:#0c3c37;color:#8af0d9}
+.bad{background:#482532;color:#ffb0bb}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.section-title{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.section-title h2{margin:0;font-size:20px}
+.notice{padding:12px 14px;border:1px solid #66502a;background:#352a17;color:#ffdfa0;border-radius:12px;margin:12px 0}
+.empty{text-align:center;padding:32px;color:var(--muted)}
+.footer{padding:25px;text-align:center;color:#7188a5;font-size:12px}
+.modal-back{position:fixed;inset:0;background:#020812cc;display:grid;place-items:center;padding:15px;z-index:5}
+.modal{width:min(760px,100%);max-height:90vh;overflow:auto;background:#0d1d33;border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:var(--shadow)}
+.modal-head{display:flex;justify-content:space-between;align-items:center}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.status{font-size:12px;color:var(--muted)}
+@media(max-width:800px){.wrap{padding:15px}.stats{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}.top{align-items:flex-start}.two{grid-template-columns:1fr}.top-actions{flex-wrap:wrap;justify-content:flex-end}.brand{font-size:17px}}
+</style>
+</head>
+<body>
+<main class="wrap">
+<header class="top">
+<div class="brand"><div class="brandmark">M</div><div>MEDNEX <div class="small muted" style="letter-spacing:2px;font-weight:600">MEDICAL LEARNING PLATFORM</div></div></div>
+<div class="top-actions">
+<button class="btn" id="langBtn">العربية</button>
+<span id="userLabel" class="small muted"></span>
+<button class="btn hidden" id="logoutBtn">Sign out</button>
+</div>
+</header>
 
+<section id="authView" class="auth card">
+<div class="pill">WELCOME TO MEDNEX</div>
+<h1>Learn smarter.<br><span style="color:var(--teal)">Practice better.</span></h1>
+<p class="muted">Your medical question bank, organized by college, subject and lecture.</p>
+<div class="tabs">
+<button class="tab active" id="loginTab">Sign in</button>
+<button class="tab" id="signupTab">Create account</button>
+</div>
+<form id="authForm">
+<div class="field"><label>Email</label><input id="authEmail" type="email" required autocomplete="email" placeholder="you@example.com"></div>
+<div class="field"><label>Password</label><input id="authPassword" type="password" required minlength="6" autocomplete="current-password" placeholder="At least 6 characters"></div>
+<div class="field hidden" id="nameField"><label>Full name</label><input id="fullName" placeholder="Your name"></div>
+<button class="btn primary" style="width:100%;margin-top:8px" id="authSubmit">Sign in</button>
+</form>
+<p id="authMsg" class="status" role="status"></p>
+<p class="small muted">Your account is securely managed by Supabase.</p>
+</section>
+
+<section id="appView" class="hidden">
+<div class="section-title">
+<div><div class="pill" id="rolePill">STUDENT WORKSPACE</div><h1 style="margin:8px 0 2px;font-size:29px">Dashboard</h1><div class="muted">Your learning space, all in one place.</div></div>
+<div class="actions">
+<button class="btn primary hidden" id="addQuestionBtn">＋ Add question</button>
+<button class="btn hidden" id="addExamBtn">＋ Create exam</button>
+</div>
+</div>
+
+<div class="stats">
+<div class="card stat"><strong id="statQuestions">0</strong><span>Available questions</span></div>
+<div class="card stat"><strong id="statSaved">0</strong><span>Saved questions</span></div>
+<div class="card stat"><strong id="statAttempts">0</strong><span>Answers submitted</span></div>
+<div class="card stat"><strong id="statExams">0</strong><span>Published exams</span></div>
+</div>
+
+<nav class="tabs" id="mainTabs">
+<button class="tab active" data-view="bank">Question bank</button>
+<button class="tab" data-view="saved">Saved</button>
+<button class="tab" data-view="exams">Exams</button>
+<button class="tab" data-view="profile">My profile</button>
+<button class="tab hidden" id="adminTab" data-view="admin">Admin tools</button>
+</nav>
+
+<section id="bankView" class="card">
+<div class="section-title"><h2>Question bank</h2><span class="status" id="bankCount"></span></div>
+<div class="toolbar">
+<input id="searchBox" placeholder="Search questions...">
+<select id="moduleFilter"><option value="">All modules</option></select>
+<select id="difficultyFilter"><option value="">All levels</option><option>Easy</option><option>Medium</option><option>Hard</option></select>
+</div>
+<div id="questionList"><div class="empty">Loading questions…</div></div>
+</section>
+
+<section id="savedView" class="card hidden"><h2>Saved questions</h2><div id="savedList" class="empty">Loading…</div></section>
+<section id="examsView" class="card hidden"><h2>Exams</h2><div class="notice">Practice mode: secure timed exam delivery and server-side scoring are not enabled yet. Do not use this version for graded or high-stakes exams.</div><div id="examList" class="empty">Loading exams…</div></section>
+<section id="profileView" class="card hidden"><h2>My profile</h2><p id="profileEmail" class="muted"></p><div class="field"><label>Full name</label><input id="profileName" placeholder="Your name"></div><button class="btn primary" id="saveProfile">Save profile</button><p id="profileMsg" class="status"></p></section>
+
+<section id="adminView" class="card hidden">
+<h2>Admin tools</h2>
+<p class="muted">Manage the academic structure and question bank.</p>
+<div class="stats">
+<div class="stat"><strong id="adminTotal">0</strong><span>Questions</span></div>
+<div class="stat"><strong id="adminModules">0</strong><span>Modules</span></div>
+</div>
+<div class="actions">
+<button class="btn primary" id="adminAddQuestion">Add a question</button>
+<button class="btn" id="refreshBtn">Refresh data</button>
+</div>
+<div class="notice">Questions can be added one at a time. Bulk import from PDF/Word is not included in this version.</div>
+</section>
+</section>
+
+<div class="footer">MEDNEX · Built for organized learning</div>
+</main>
+
+<div id="questionModal" class="modal-back hidden">
+<div class="modal">
+<div class="modal-head"><h2 id="questionModalTitle">Add question</h2><button class="btn" data-close="questionModal">✕</button></div>
+<form id="questionForm">
+<div class="field"><label>Question (English) *</label><textarea id="qEn" required></textarea></div>
+<div class="field"><label>Question (Arabic)</label><textarea id="qAr"></textarea></div>
+<div class="two">
+<div class="field"><label>College</label><select id="qCollege"></select></div>
+<div class="field"><label>Subject</label><select id="qSubject"></select></div>
+<div class="field"><label>Module</label><select id="qModule"></select></div>
+<div class="field"><label>Lecture</label><select id="qLecture"></select></div>
+</div>
+<div class="two">
+<div class="field"><label>Difficulty</label><select id="qDifficulty"><option value="Medium">Medium</option><option>Easy</option><option>Hard</option></select></div>
+<div class="field"><label>Topic</label><input id="qTopic"></div>
+</div>
+<div class="field"><label>Options (one per line, format: A: text)</label><textarea id="qOptions" required placeholder="A: Option one&#10;B: Option two&#10;C: Option three&#10;D: Option four"></textarea></div>
+<div class="field"><label>Correct option key (e.g. A)</label><input id="qCorrect" required maxlength="2" placeholder="A"></div>
+<div class="field"><label>Explanation</label><textarea id="qExplanation"></textarea></div>
+<div class="two">
+<div class="field"><label>Source name</label><input id="qSource"></div>
+<div class="field"><label>Source page</label><input id="qPage" type="number" min="1"></div>
+</div>
+<button class="btn primary" type="submit">Save question</button>
+<p id="questionMsg" class="status"></p>
+</form>
+</div>
+</div>
+
+<div id="examModal" class="modal-back hidden">
+<div class="modal">
+<div class="modal-head"><h2>Create practice exam</h2><button class="btn" data-close="examModal">✕</button></div>
+<form id="examForm">
+<div class="field"><label>Exam title (English) *</label><input id="examTitle" required></div>
+<div class="field"><label>Exam title (Arabic)</label><input id="examTitleAr"></div>
+<div class="field"><label>Module</label><select id="examModule"></select></div>
+<div class="field"><label>Duration (minutes)</label><input id="examDuration" type="number" min="1" max="240" value="30"></div>
+<label class="small"><input type="checkbox" id="examPublish"> Publish for signed-in students</label>
+<p class="notice">Published exams are practice listings only in this version.</p>
+<button class="btn primary" type="submit">Create exam</button>
+<p id="examMsg" class="status"></p>
+</form>
+</div>
+</div>
+<script>
+const SUPABASE_URL = "https://evncennwrrtewoxibvvk.supabase.co";
+const SUPABASE_KEY = "sb_publishable_y7GyxgZuGVmNajjvPu440Q_gSTYi_1c";
+
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let currentUser = null;
+let isAdmin = false;
+let questions = [];
+let savedIds = new Set();
+let modules = [];
+let currentAuthMode = "login";
+let activeView = "bank";
+let currentLang = "en";
+
+const $ = id => document.getElementById(id);
+
+function esc(value) {
+  return String(value ?? "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
+}
+
+function message(id, text, good=false) {
+  const el = $(id);
+  if (!el) return;
+  el.textContent = text;
+  el.style.color = good ? "#70e4c9" : "#ff9aa7";
+}
+
+function show(id) { $(id)?.classList.remove("hidden"); }
+function hide(id) { $(id)?.classList.add("hidden"); }
+
+function openModal(id) { show(id); }
+function closeModal(id) { hide(id); }
+
+document.querySelectorAll("[data-close]").forEach(btn => {
+  btn.addEventListener("click", () => closeModal(btn.dataset.close));
+});
+
+function setAuthMode(mode) {
+  currentAuthMode = mode;
+  $("loginTab").classList.toggle("active", mode === "login");
+  $("signupTab").classList.toggle("active", mode === "signup");
+  $("nameField").classList.toggle("hidden", mode !== "signup");
+  $("authSubmit").textContent = mode === "login" ? "Sign in" : "Create account";
+  $("authPassword").autocomplete = mode === "login" ? "current-password" : "new-password";
+  $("authMsg").textContent = "";
+}
+
+$("loginTab").addEventListener("click", () => setAuthMode("login"));
+$("signupTab").addEventListener("click", () => setAuthMode("signup"));
+
+$("authForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const email = $("authEmail").value.trim();
+  const password = $("authPassword").value;
+  const fullName = $("fullName").value.trim();
+
+  $("authSubmit").disabled = true;
+  message("authMsg", "Please wait...");
+
+  try {
+    let result;
+
+    if (currentAuthMode === "signup") {
+      result = await db.auth.signUp({
+        email,
+        password,
+        options: { data: { full_name: fullName } }
+      });
+    } else {
+      result = await db.auth.signInWithPassword({ email, password });
+    }
+
+    if (result.error) throw result.error;
+
+    if (currentAuthMode === "signup" && !result.data.session) {
+      message("authMsg", "Account created. Check your email to confirm it, then sign in.", true);
+    } else {
+      await loadApp();
+    }
+  } catch (err) {
+    message("authMsg", err.message || "Authentication failed.");
+  } finally {
+    $("authSubmit").disabled = false;
+  }
+});
+
+$("logoutBtn").addEventListener("click", async () => {
+  await db.auth.signOut();
+  currentUser = null;
+  isAdmin = false;
+  show("authView");
+  hide("appView");
+  hide("logoutBtn");
+  $("userLabel").textContent = "";
+});
+
+async function loadApp() {
+  const { data, error } = await db.auth.getUser();
+  if (error || !data.user) {
+    show("authView");
+    hide("appView");
+    return;
+  }
+
+  currentUser = data.user;
+
+  const roleResult = await db.rpc("is_admin");
+  isAdmin = !roleResult.error && roleResult.data === true;
+
+  hide("authView");
+  show("appView");
+  show("logoutBtn");
+
+  $("userLabel").textContent = currentUser.email || "";
+  $("rolePill").textContent = isAdmin ? "ADMIN WORKSPACE" : "STUDENT WORKSPACE";
+
+  if (isAdmin) {
+    show("adminTab");
+    show("addQuestionBtn");
+    show("addExamBtn");
+  } else {
+    hide("adminTab");
+    hide("addQuestionBtn");
+    hide("addExamBtn");
+  }
+
+  await Promise.all([
+    loadQuestions(),
+    loadSaved(),
+    loadModules(),
+    loadProfile(),
+    loadExams(),
+    loadStats()
+  ]);
+}
+
+async function loadQuestions() {
+  const { data, error } = await db
+    .from("questions")
+    .select("*")
+    .order("created_at", { ascending: false })
+    .limit(500);
+
+  if (error) {
+    $("questionList").innerHTML =
+      `<div class="empty">Could not load questions: ${esc(error.message)}</div>`;
+    return;
+  }
+
+  questions = data || [];
+  renderQuestions();
+  $("bankCount").textContent = `${questions.length} questions`;
+  $("statQuestions").textContent = questions.length;
+  $("adminTotal").textContent = questions.length;
+}
+
+function normalizeOptions(options) {
+  if (Array.isArray(options)) {
+    return options.map((item, i) => {
+      if (typeof item === "string") {
+        const match = item.match(/^([A-Z])\s*:\s*(.*)$/);
+        return match
+          ? { key: match[1], text: match[2] }
+          : { key: String.fromCharCode(65+i), text: item };
+      }
+      return {
+        key: item.key || item.id || String.fromCharCode(65+i),
+        text: item.text || item.label || item.value || ""
+      };
+    });
+  }
+
+  if (options && typeof options === "object") {
+    return Object.entries(options).map(([key, value]) => ({
+      key,
+      text: typeof value === "string"
+        ? value
+        : value?.text || value?.label || ""
+    }));
+  }
+
+  return [];
+}
+
+
+function renderQuestions(target="questionList", list=questions) {
+  const search = $("searchBox").value.toLowerCase().trim();
+  const moduleValue = $("moduleFilter").value;
+  const difficulty = $("difficultyFilter").value;
+
+  let filtered = list.filter(q => {
+    const text = `${q.question_en || ""} ${q.question_ar || ""} ${q.topic || ""}`.toLowerCase();
+    return (!search || text.includes(search))
+      && (!moduleValue || q.module === moduleValue)
+      && (!difficulty || q.difficulty === difficulty);
+  });
+
+  if (!filtered.length) {
+    $(target).innerHTML = `<div class="empty">No questions found.</div>`;
+    return;
+  }
+
+  $(target).innerHTML = filtered.map(q => {
+    const opts = normalizeOptions(q.options);
+    const optionsHTML = opts.map(o => `
+      <label class="option">
+        <input type="radio" name="answer_${esc(q.id)}" value="${esc(o.key)}">
+        <span><b>${esc(o.key)}.</b> ${esc(o.text)}</span>
+      </label>
+    `).join("");
+
+    const isSaved = savedIds.has(q.id);
+
+    return `
+      <article class="qcard" data-question="${esc(q.id)}">
+        <div class="qmeta">
+          <span class="pill">${esc(q.module || "General")}</span>
+          <span>${esc(q.difficulty || "Unspecified")}</span>
+          ${q.topic ? `<span>${esc(q.topic)}</span>` : ""}
+        </div>
+        <div class="qtext">${esc(currentLang === "ar" && q.question_ar ? q.question_ar : q.question_en)}</div>
+        ${optionsHTML}
+        <div class="actions">
+          <button class="btn primary" data-answer="${esc(q.id)}">Check answer</button>
+          <button class="btn" data-save="${esc(q.id)}">${isSaved ? "★ Saved" : "☆ Save"}</button>
+        </div>
+        <div id="feedback_${esc(q.id)}"></div>
+        <details style="margin-top:10px">
+          <summary class="muted">Explanation and source</summary>
+          <p>Submit your answer to check it.</p>
+          <p class="small muted">${esc(q.source_name || "Source not provided")}${q.source_page ? " · Page " + esc(q.source_page) : ""}</p>
+        </details>
+      </article>
+    `;
+  }).join("");
+}
+
+
+$("questionList").addEventListener("click", async e => {
+  const answerBtn = e.target.closest("[data-answer]");
+  const saveBtn = e.target.closest("[data-save]");
+
+  if (answerBtn) {
+    const id = answerBtn.dataset.answer;
+    const q = questions.find(item => item.id === id);
+    const selected = document.querySelector(`input[name="answer_${CSS.escape(id)}"]:checked`);
+
+    if (!selected) {
+      message(`feedback_${id}`, "Choose an answer first.");
+      return;
+    }
+
+    answerBtn.disabled = true;
+
+    const feedback = $(`feedback_${id}`);
+    feedback.textContent = "Checking...";
+
+    const { data: correct, error } = await db.rpc(
+      "check_question_answer",
+      {
+        p_question_id: id,
+        p_selected_option: selected.value
+      }
+    );
+
+    answerBtn.disabled = false;
+
+    if (error) {
+      feedback.textContent = "Could not check answer: " + error.message;
+      return;
+    }
+
+    feedback.className = `feedback ${correct ? "good" : "bad"}`;
+    feedback.textContent = correct
+      ? "Correct answer!"
+      : "Incorrect. Review this topic.";
+
+    await loadStats();
+  }
+
+  if (saveBtn) {
+    await toggleSaved(saveBtn.dataset.save);
+  }
+});
+
+async function loadSaved() {
+  const { data, error } = await db
+    .from("saved_questions")
+    .select("question_id")
+    .eq("student_id", currentUser.id);
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+
+  savedIds = new Set((data || []).map(x => x.question_id));
+  $("statSaved").textContent = savedIds.size;
+}
+
+async function toggleSaved(questionId) {
+  if (savedIds.has(questionId)) {
+    const { error } = await db.from("saved_questions")
+      .delete()
+      .eq("student_id", currentUser.id)
+      .eq("question_id", questionId);
+
+    if (error) return alert(error.message);
+  } else {
+    const { error } = await db.from("saved_questions").insert({
+      student_id: currentUser.id,
+      question_id: questionId
+    });
+
+    if (error) return alert(error.message);
+  }
+
+  await loadSaved();
+  renderQuestions();
+
+  if (activeView === "saved") renderSaved();
+}
+
+function renderSaved() {
+  const list = questions.filter(q => savedIds.has(q.id));
+  renderQuestions("savedList", list);
+}
+
+async function loadModules() {
+  const { data, error } = await db
+    .from("academic_modules")
+    .select("id,name_en,name_ar")
+    .order("name_en");
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+
+  modules = data || [];
+  const options = modules.map(m =>
+    `<option value="${esc(m.name_en)}">${esc(m.name_en)}</option>`
+  ).join("");
+
+  $("moduleFilter").innerHTML = `<option value="">All modules</option>${options}`;
+
+  const moduleSelect = $("qModule");
+  const examSelect = $("examModule");
+
+  moduleSelect.innerHTML = `<option value="">Select module</option>` +
+    modules.map(m => `<option value="${esc(m.id)}">${esc(m.name_en)}</option>`).join("");
+
+  examSelect.innerHTML = `<option value="">Select module</option>` +
+    modules.map(m => `<option value="${esc(m.id)}">${esc(m.name_en)}</option>`).join("");
+
+  $("adminModules").textContent = modules.length;
+
+  const { data: colleges } = await db.from("colleges").select("id,name_en");
+  $("qCollege").innerHTML = `<option value="">Select college</option>` +
+    (colleges || []).map(c => `<option value="${esc(c.id)}">${esc(c.name_en)}</option>`).join("");
+
+  $("qSubject").innerHTML = `<option value="">Select subject</option>`;
+  $("qLecture").innerHTML = `<option value="">Select lecture</option>`;
+}
+
+$("qCollege").addEventListener("change", async () => {
+  const collegeId = $("qCollege").value;
+  $("qSubject").innerHTML = `<option value="">Loading...</option>`;
+  $("qModule").innerHTML = `<option value="">Select module</option>`;
+
+  if (!collegeId) return;
+
+  const { data, error } = await db.from("subjects")
+    .select("id,name_en")
+    .eq("college_id", collegeId)
+    .order("name_en");
+
+  if (error) {
+    $("qSubject").innerHTML = `<option value="">Could not load</option>`;
+    return;
+  }
+
+  $("qSubject").innerHTML = `<option value="">Select subject</option>` +
+    (data || []).map(s => `<option value="${esc(s.id)}">${esc(s.name_en)}</option>`).join("");
+});
+
+$("qSubject").addEventListener("change", async () => {
+  const subjectId = $("qSubject").value;
+  $("qModule").innerHTML = `<option value="">Loading...</option>`;
+
+  if (!subjectId) return;
+
+  const { data, error } = await db.from("academic_modules")
+    .select("id,name_en")
+    .eq("subject_id", subjectId)
+    .order("name_en");
+
+  if (error) {
+    $("qModule").innerHTML = `<option value="">Could not load</option>`;
+    return;
+  }
+
+  $("qModule").innerHTML = `<option value="">Select module</option>` +
+    (data || []).map(m => `<option value="${esc(m.id)}">${esc(m.name_en)}</option>`).join("");
+});
+
+$("qModule").addEventListener("change", async () => {
+  const moduleId = $("qModule").value;
+  $("qLecture").innerHTML = `<option value="">Loading...</option>`;
+
+  if (!moduleId) return;
+
+  const { data, error } = await db.from("academic_lectures")
+    .select("id,name_en,lecture_number")
+    .eq("module_id", moduleId)
+    .order("lecture_number");
+
+  if (error) {
+    $("qLecture").innerHTML = `<option value="">Could not load</option>`;
+    return;
+  }
+
+  $("qLecture").innerHTML = `<option value="">Select lecture</option>` +
+    (data || []).map(l => `<option value="${esc(l.id)}">${esc(l.name_en)}</option>`).join("");
+});
+
+async function loadProfile() {
+  const { data, error } = await db.from("profiles")
+    .select("full_name")
+    .eq("id", currentUser.id)
+    .maybeSingle();
+
+  if (!error && data) $("profileName").value = data.full_name || "";
+  $("profileEmail").textContent = currentUser.email || "";
+}
+
+$("saveProfile").addEventListener("click", async () => {
+  const { error } = await db.from("profiles").upsert({
+    id: currentUser.id,
+    full_name: $("profileName").value.trim()
+  });
+
+  message("profileMsg", error ? error.message : "Profile saved.", !error);
+});
+
+async function loadExams() {
+  const { data, error } = await db.from("exams")
+    .select("id,title_en,title_ar,duration_minutes,total_questions,created_at")
+    .eq("is_published", true)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    $("examList").textContent = error.message;
+    return;
+  }
+
+  $("statExams").textContent = (data || []).length;
+
+  $("examList").innerHTML = data?.length
+    ? data.map(exam => `
+      <div class="qcard">
+        <b>${esc(exam.title_en)}</b>
+        <p class="muted small">${esc(exam.duration_minutes)} minutes · ${esc(exam.total_questions)} questions</p>
+      </div>
+    `).join("")
+    : `<div class="empty">No published exams yet.</div>`;
+}
+
+async function loadStats() {
+  const { count: savedCount } = await db.from("saved_questions")
+    .select("*", { count: "exact", head: true })
+    .eq("student_id", currentUser.id);
+
+  const { count: attemptCount } = await db.from("question_attempts")
+    .select("*", { count: "exact", head: true })
+    .eq("student_id", currentUser.id);
+
+  $("statSaved").textContent = savedCount || 0;
+  $("statAttempts").textContent = attemptCount || 0;
+}
+
+function switchView(view) {
+  activeView = view;
+
+  ["bank","saved","exams","profile","admin"].forEach(name => {
+    $(`${name}View`).classList.toggle("hidden", name !== view);
+  });
+
+  document.querySelectorAll("#mainTabs .tab").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.view === view);
+  });
+
+  if (view === "saved") renderSaved();
+}
+
+$("mainTabs").addEventListener("click", e => {
+  const tab = e.target.closest("[data-view]");
+  if (tab) switchView(tab.dataset.view);
+});
+
+$("searchBox").addEventListener("input", () => renderQuestions());
+$("moduleFilter").addEventListener("change", () => renderQuestions());
+$("difficultyFilter").addEventListener("change", () => renderQuestions());
+
+function openQuestionForm() {
+  $("questionForm").reset();
+  message("questionMsg", "");
+  openModal("questionModal");
+}
+
+$("addQuestionBtn").addEventListener("click", openQuestionForm);
+$("adminAddQuestion").addEventListener("click", openQuestionForm);
+
+$("questionForm").addEventListener("submit", async e => {
+  e.preventDefault();
+
+  if (!isAdmin) {
+    message("questionMsg", "Admin permission required.");
+    return;
+  }
+
+  const options = {};
+  $("qOptions").value.split("\n").map(x => x.trim()).filter(Boolean).forEach(line => {
+    const match = line.match(/^([A-Z])\s*:\s*(.+)$/);
+    if (match) options[match[1]] = match[2];
+  });
+
+  if (Object.keys(options).length < 2) {
+    message("questionMsg", "Enter at least two options using A: text format.");
+    return;
+  }
+
+  const correct = $("qCorrect").value.trim().toUpperCase();
+  if (!options[correct]) {
+    message("questionMsg", "Correct option must match one of the option keys.");
+    return;
+  }
+
+  const moduleId = $("qModule").value;
+  const selectedModule = modules.find(m => m.id === moduleId);
+
+  if (!selectedModule) {
+    message("questionMsg", "Select a module first.");
+    return;
+  }
+
+    const payload = {
+    module: selectedModule.name_en,
+    module_id: moduleId,
+    college_id: $("qCollege").value || null,
+    subject_id: $("qSubject").value || null,
+    lecture_id: $("qLecture").value || null,
+    question_en: $("qEn").value.trim(),
+    question_ar: $("qAr").value.trim() || null,
+    options,
+    difficulty: $("qDifficulty").value,
+    topic: $("qTopic").value.trim() || null,
+    source_name: $("qSource").value.trim() || null,
+    source_page: $("qPage").value ? Number($("qPage").value) : null
+  };
+
+  const { data: inserted, error } = await db
+    .from("questions")
+    .insert(payload)
+    .select("id")
+    .single();
+
+  if (error) {
+    message("questionMsg", error.message);
+    return;
+  }
+
+  const { error: keyError } = await db
+    .from("question_answer_keys")
+    .insert({
+      question_id: inserted.id,
+      correct_option: correct
+    });
+
+  if (keyError) {
+    message("questionMsg", "Question saved, but answer key failed: " + keyError.message);
+    return;
+  }
+
+  message("questionMsg", "Question added successfully.", true);
+  await loadQuestions();
+  await loadStats();
+  setTimeout(() => closeModal("questionModal"), 900);
+});
+
+$("addExamBtn").addEventListener("click", () => {
+  $("examForm").reset();
+  message("examMsg", "");
+  openModal("examModal");
+});
+
+$("examForm").addEventListener("submit", async e => {
+  e.preventDefault();
+
+  if (!isAdmin) return;
+
+  const moduleId = $("examModule").value || null;
+
+  const { error } = await db.from("exams").insert({
+    title_en: $("examTitle").value.trim(),
+    title_ar: $("examTitleAr").value.trim() || null,
+    module_id: moduleId,
+    duration_minutes: Number($("examDuration").value),
+    is_published: $("examPublish").checked,
+    created_by: currentUser.id
+  });
+
+  if (error) {
+    message("examMsg", error.message);
+    return;
+  }
+
+  message("examMsg", "Exam created.", true);
+  await loadExams();
+  setTimeout(() => closeModal("examModal"), 900);
+});
+
+$("refreshBtn").addEventListener("click", async () => {
+  await Promise.all([
+    loadQuestions(),
+    loadModules(),
+    loadExams(),
+    loadSaved(),
+    loadStats()
+  ]);
+});
+
+$("langBtn").addEventListener("click", () => {
+  currentLang = currentLang === "en" ? "ar" : "en";
+  $("langBtn").textContent = currentLang === "en" ? "العربية" : "English";
+  document.documentElement.lang = currentLang;
+  document.documentElement.dir = currentLang === "ar" ? "rtl" : "ltr";
+  renderQuestions();
+});
+
+async function start() {
+  const { data } = await db.auth.getSession();
+  if (data.session) {
+    await loadApp();
+  } else {
+    show("authView");
+    hide("appView");
+  }
+}
+
+db.auth.onAuthStateChange((event, session) => {
+  if (event === "SIGNED_IN" && session) {
+    setTimeout(() => loadApp(), 0);
+  }
+});
+
+start();
+</script>
+</body>
+</html>
