@@ -61,142 +61,150 @@ button{cursor:pointer;border:0}
 .modal{width:min(760px,100%);max-height:90vh;overflow:auto;background:#0d1d33;border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:var(--shadow)}
 .modal-head{display:flex;justify-content:space-between;align-items:center}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.status{font-size:12px;color:var(--muted)}
+.status{font-size:12px;color:var(--muted);white-space:pre-wrap}
+select:disabled{opacity:.6}
 @media(max-width:800px){.wrap{padding:15px}.stats{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}.top{align-items:flex-start}.two{grid-template-columns:1fr}.top-actions{flex-wrap:wrap;justify-content:flex-end}.brand{font-size:17px}}
 </style>
 </head>
 <body>
 <main class="wrap">
 <header class="top">
-<div class="brand"><div class="brandmark">M</div><div>MEDNEX <div class="small muted" style="letter-spacing:2px;font-weight:600">MEDICAL LEARNING PLATFORM</div></div></div>
-<div class="top-actions">
-<button class="btn" id="langBtn">العربية</button>
-<span id="userLabel" class="small muted"></span>
-<button class="btn hidden" id="logoutBtn">Sign out</button>
-</div>
+  <div class="brand"><div class="brandmark">M</div><div>MEDNEX<div class="small muted" style="letter-spacing:2px;font-weight:600">MEDICAL LEARNING PLATFORM</div></div></div>
+  <div class="top-actions">
+    <button class="btn" id="langBtn" type="button">العربية</button>
+    <span id="userLabel" class="small muted"></span>
+    <button class="btn hidden" id="logoutBtn" type="button">Sign out</button>
+  </div>
 </header>
 
 <section id="authView" class="auth card">
-<div class="pill">WELCOME TO MEDNEX</div>
-<h1>Learn smarter.<br><span style="color:var(--teal)">Practice better.</span></h1>
-<p class="muted">Your medical question bank, organized by college, subject and lecture.</p>
-<div class="tabs">
-<button class="tab active" id="loginTab">Sign in</button>
-<button class="tab" id="signupTab">Create account</button>
-</div>
-<form id="authForm">
-<div class="field"><label>Email</label><input id="authEmail" type="email" required autocomplete="email" placeholder="you@example.com"></div>
-<div class="field"><label>Password</label><input id="authPassword" type="password" required minlength="6" autocomplete="current-password" placeholder="At least 6 characters"></div>
-<div class="field hidden" id="nameField"><label>Full name</label><input id="fullName" placeholder="Your name"></div>
-<button class="btn primary" style="width:100%;margin-top:8px" id="authSubmit">Sign in</button>
-</form>
-<p id="authMsg" class="status" role="status"></p>
-<p class="small muted">Your account is securely managed by Supabase.</p>
+  <div class="pill">WELCOME TO MEDNEX</div>
+  <h1>Learn smarter.<br><span style="color:var(--teal)">Practice better.</span></h1>
+  <p class="muted">Your medical question bank, organized by college, subject and lecture.</p>
+  <div class="tabs">
+    <button class="tab active" id="loginTab" type="button">Sign in</button>
+    <button class="tab" id="signupTab" type="button">Create account</button>
+  </div>
+  <form id="authForm">
+    <div class="field"><label for="authEmail">Email</label><input id="authEmail" type="email" required autocomplete="email" placeholder="you@example.com"></div>
+    <div class="field"><label for="authPassword">Password</label><input id="authPassword" type="password" required minlength="6" autocomplete="current-password" placeholder="At least 6 characters"></div>
+    <div class="field hidden" id="nameField"><label for="fullName">Full name</label><input id="fullName" placeholder="Your name"></div>
+    <button class="btn primary" style="width:100%;margin-top:8px" id="authSubmit" type="submit">Sign in</button>
+  </form>
+  <p id="authMsg" class="status" role="status"></p>
+  <p class="small muted">Your account is securely managed by Supabase.</p>
 </section>
 
 <section id="appView" class="hidden">
-<div class="section-title">
-<div><div class="pill" id="rolePill">STUDENT WORKSPACE</div><h1 style="margin:8px 0 2px;font-size:29px">Dashboard</h1><div class="muted">Your learning space, all in one place.</div></div>
-<div class="actions">
-<button class="btn primary hidden" id="addQuestionBtn">＋ Add question</button>
-<button class="btn hidden" id="addExamBtn">＋ Create exam</button>
-</div>
-</div>
+  <div class="section-title">
+    <div><div class="pill" id="rolePill">STUDENT WORKSPACE</div><h1 style="margin:8px 0 2px;font-size:29px">Dashboard</h1><div class="muted">Your learning space, all in one place.</div></div>
+    <div class="actions">
+      <button class="btn primary hidden" id="addQuestionBtn" type="button">＋ Add question</button>
+      <button class="btn hidden" id="addExamBtn" type="button">＋ Create exam</button>
+    </div>
+  </div>
 
-<div class="stats">
-<div class="card stat"><strong id="statQuestions">0</strong><span>Available questions</span></div>
-<div class="card stat"><strong id="statSaved">0</strong><span>Saved questions</span></div>
-<div class="card stat"><strong id="statAttempts">0</strong><span>Answers submitted</span></div>
-<div class="card stat"><strong id="statExams">0</strong><span>Published exams</span></div>
-</div>
+  <div class="stats">
+    <div class="card stat"><strong id="statQuestions">0</strong><span>Available questions</span></div>
+    <div class="card stat"><strong id="statSaved">0</strong><span>Saved questions</span></div>
+    <div class="card stat"><strong id="statAttempts">0</strong><span>Answers submitted</span></div>
+    <div class="card stat"><strong id="statExams">0</strong><span>Published exams</span></div>
+  </div>
 
-<nav class="tabs" id="mainTabs">
-<button class="tab active" data-view="bank">Question bank</button>
-<button class="tab" data-view="saved">Saved</button>
-<button class="tab" data-view="exams">Exams</button>
-<button class="tab" data-view="profile">My profile</button>
-<button class="tab hidden" id="adminTab" data-view="admin">Admin tools</button>
-</nav>
+  <nav class="tabs" id="mainTabs">
+    <button class="tab active" data-view="bank" type="button">Question bank</button>
+    <button class="tab" data-view="saved" type="button">Saved</button>
+    <button class="tab" data-view="exams" type="button">Exams</button>
+    <button class="tab" data-view="profile" type="button">My profile</button>
+    <button class="tab hidden" id="adminTab" data-view="admin" type="button">Admin tools</button>
+  </nav>
 
-<section id="bankView" class="card">
-<div class="section-title"><h2>Question bank</h2><span class="status" id="bankCount"></span></div>
-<div class="toolbar">
-<input id="searchBox" placeholder="Search questions...">
-<select id="moduleFilter"><option value="">All modules</option></select>
-<select id="difficultyFilter"><option value="">All levels</option><option>Easy</option><option>Medium</option><option>Hard</option></select>
-</div>
-<div id="questionList"><div class="empty">Loading questions…</div></div>
+  <section id="bankView" class="card">
+    <div class="section-title"><h2>Question bank</h2><span class="status" id="bankCount"></span></div>
+    <div class="toolbar">
+      <input id="searchBox" placeholder="Search questions..." aria-label="Search questions">
+      <select id="moduleFilter" aria-label="Filter by module"><option value="">All modules</option></select>
+      <select id="difficultyFilter" aria-label="Filter by difficulty"><option value="">All levels</option><option value="Easy">Easy</option><option value="Medium">Medium</option><option value="Hard">Hard</option></select>
+    </div>
+    <div id="questionList"><div class="empty">Loading questions…</div></div>
+  </section>
+
+  <section id="savedView" class="card hidden"><h2>Saved questions</h2><div id="savedList" class="empty">Loading…</div></section>
+  <section id="examsView" class="card hidden"><h2>Exams</h2><div class="notice">Practice mode: secure timed exam delivery and server-side scoring are not enabled yet. Do not use this version for graded or high-stakes exams.</div><div id="examList" class="empty">Loading exams…</div></section>
+  <section id="profileView" class="card hidden"><h2>My profile</h2><p id="profileEmail" class="muted"></p><div class="field"><label for="profileName">Full name</label><input id="profileName" placeholder="Your name"></div><button class="btn primary" id="saveProfile" type="button">Save profile</button><p id="profileMsg" class="status"></p></section>
+
+  <section id="adminView" class="card hidden">
+    <h2>Admin tools</h2><p class="muted">Manage the academic structure and question bank.</p>
+    <div class="stats">
+      <div class="stat"><strong id="adminTotal">0</strong><span>Questions</span></div>
+      <div class="stat"><strong id="adminModules">0</strong><span>Modules</span></div>
+    </div>
+    <div class="actions">
+      <button class="btn primary" id="adminAddQuestion" type="button">Add a question</button>
+      <button class="btn" id="refreshBtn" type="button">Refresh data</button>
+    </div>
+    <p id="adminMsg" class="status"></p>
+    <div class="notice">Questions can be added one at a time. Bulk import from PDF/Word is not included in this version.</div>
+  </section>
 </section>
-
-<section id="savedView" class="card hidden"><h2>Saved questions</h2><div id="savedList" class="empty">Loading…</div></section>
-<section id="examsView" class="card hidden"><h2>Exams</h2><div class="notice">Practice mode: secure timed exam delivery and server-side scoring are not enabled yet. Do not use this version for graded or high-stakes exams.</div><div id="examList" class="empty">Loading exams…</div></section>
-<section id="profileView" class="card hidden"><h2>My profile</h2><p id="profileEmail" class="muted"></p><div class="field"><label>Full name</label><input id="profileName" placeholder="Your name"></div><button class="btn primary" id="saveProfile">Save profile</button><p id="profileMsg" class="status"></p></section>
-
-<section id="adminView" class="card hidden">
-<h2>Admin tools</h2>
-<p class="muted">Manage the academic structure and question bank.</p>
-<div class="stats">
-<div class="stat"><strong id="adminTotal">0</strong><span>Questions</span></div>
-<div class="stat"><strong id="adminModules">0</strong><span>Modules</span></div>
-</div>
-<div class="actions">
-<button class="btn primary" id="adminAddQuestion">Add a question</button>
-<button class="btn" id="refreshBtn">Refresh data</button>
-</div>
-<div class="notice">Questions can be added one at a time. Bulk import from PDF/Word is not included in this version.</div>
-</section>
-</section>
-
 <div class="footer">MEDNEX · Built for organized learning</div>
 </main>
 
 <div id="questionModal" class="modal-back hidden">
-<div class="modal">
-<div class="modal-head"><h2 id="questionModalTitle">Add question</h2><button class="btn" data-close="questionModal">✕</button></div>
-<form id="questionForm">
-<div class="field"><label>Question (English) *</label><textarea id="qEn" required></textarea></div>
-<div class="field"><label>Question (Arabic)</label><textarea id="qAr"></textarea></div>
-<div class="two">
-<div class="field"><label>College</label><select id="qCollege"></select></div>
-<div class="field"><label>Subject</label><select id="qSubject"></select></div>
-<div class="field"><label>Module</label><select id="qModule"></select></div>
-<div class="field"><label>Lecture</label><select id="qLecture"></select></div>
-</div>
-<div class="two">
-<div class="field"><label>Difficulty</label><select id="qDifficulty"><option value="Medium">Medium</option><option>Easy</option><option>Hard</option></select></div>
-<div class="field"><label>Topic</label><input id="qTopic"></div>
-</div>
-<div class="field"><label>Options (one per line, format: A: text)</label><textarea id="qOptions" required placeholder="A: Option one&#10;B: Option two&#10;C: Option three&#10;D: Option four"></textarea></div>
-<div class="field"><label>Correct option key (e.g. A)</label><input id="qCorrect" required maxlength="2" placeholder="A"></div>
-<div class="field"><label>Explanation</label><textarea id="qExplanation"></textarea></div>
-<div class="two">
-<div class="field"><label>Source name</label><input id="qSource"></div>
-<div class="field"><label>Source page</label><input id="qPage" type="number" min="1"></div>
-</div>
-<button class="btn primary" type="submit">Save question</button>
-<p id="questionMsg" class="status"></p>
-</form>
-</div>
+  <div class="modal">
+    <div class="modal-head"><h2 id="questionModalTitle">Add question</h2><button class="btn" data-close="questionModal" type="button">✕</button></div>
+    <form id="questionForm">
+      <div class="field"><label for="qEn">Question (English) *</label><textarea id="qEn" required></textarea></div>
+      <div class="field"><label for="qAr">Question (Arabic)</label><textarea id="qAr"></textarea></div>
+      <div class="two">
+        <div class="field"><label for="qCollege">College *</label><select id="qCollege" required><option value="">Loading colleges…</option></select></div>
+        <div class="field"><label for="qSubject">Subject *</label><select id="qSubject" required disabled><option value="">Select college first</option></select></div>
+        <div class="field"><label for="qModule">Module *</label><select id="qModule" required disabled><option value="">Select subject first</option></select></div>
+        <div class="field"><label for="qLecture">Lecture (optional)</label><select id="qLecture" disabled><option value="">Select module first</option></select></div>
+      </div>
+      <div class="two">
+        <div class="field"><label for="qDifficulty">Difficulty</label><select id="qDifficulty"><option value="Medium">Medium</option><option value="Easy">Easy</option><option value="Hard">Hard</option></select></div>
+        <div class="field"><label for="qTopic">Topic</label><input id="qTopic"></div>
+      </div>
+      <div class="field"><label for="qOptions">Options (one per line, format: A: text)</label><textarea id="qOptions" required placeholder="A: Option one&#10;B: Option two&#10;C: Option three&#10;D: Option four"></textarea></div>
+      <div class="field"><label for="qCorrect">Correct option key (e.g. A)</label><input id="qCorrect" required maxlength="1" pattern="[A-Z]" placeholder="A"></div>
+      <div class="field"><label for="qExplanation">Explanation (English)</label><textarea id="qExplanation"></textarea></div>
+      <div class="two">
+        <div class="field"><label for="qSource">Source name</label><input id="qSource"></div>
+        <div class="field"><label for="qPage">Source page</label><input id="qPage" type="number" min="1" step="1"></div>
+      </div>
+      <button class="btn primary" id="saveQuestionBtn" type="submit">Save question</button>
+      <p id="questionMsg" class="status" role="status"></p>
+    </form>
+  </div>
 </div>
 
 <div id="examModal" class="modal-back hidden">
-<div class="modal">
-<div class="modal-head"><h2>Create practice exam</h2><button class="btn" data-close="examModal">✕</button></div>
-<form id="examForm">
-<div class="field"><label>Exam title (English) *</label><input id="examTitle" required></div>
-<div class="field"><label>Exam title (Arabic)</label><input id="examTitleAr"></div>
-<div class="field"><label>Module</label><select id="examModule"></select></div>
-<div class="field"><label>Duration (minutes)</label><input id="examDuration" type="number" min="1" max="240" value="30"></div>
-<label class="small"><input type="checkbox" id="examPublish"> Publish for signed-in students</label>
-<p class="notice">Published exams are practice listings only in this version.</p>
-<button class="btn primary" type="submit">Create exam</button>
-<p id="examMsg" class="status"></p>
-</form>
+  <div class="modal">
+    <div class="modal-head"><h2>Create practice exam</h2><button class="btn" data-close="examModal" type="button">✕</button></div>
+    <form id="examForm">
+      <div class="field"><label for="examTitle">Exam title (English) *</label><input id="examTitle" required></div>
+      <div class="field"><label for="examTitleAr">Exam title (Arabic)</label><input id="examTitleAr"></div>
+      <div class="field"><label for="examModule">Module</label><select id="examModule"><option value="">All modules</option></select></div>
+      <div class="field"><label for="examDuration">Duration (minutes)</label><input id="examDuration" type="number" min="1" max="240" value="30" required></div>
+      <label class="small"><input type="checkbox" id="examPublish"> Publish for signed-in students</label>
+      <p class="notice">Published exams are practice listings only in this version.</p>
+      <button class="btn primary" id="saveExamBtn" type="submit">Create exam</button>
+      <p id="examMsg" class="status" role="status"></p>
+    </form>
+  </div>
 </div>
-</div>
+
 <script>
+"use strict";
+
 const SUPABASE_URL = "https://evncennwrrtewoxibvvk.supabase.co";
 const SUPABASE_KEY = "sb_publishable_y7GyxgZuGVmNajjvPu440Q_gSTYi_1c";
+
+if (!window.supabase || !window.supabase.createClient) {
+  document.body.innerHTML = '<p style="padding:24px;color:white">Could not load the Supabase library. Check your internet connection and reload.</p>';
+  throw new Error("Supabase library unavailable");
+}
 
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -204,10 +212,14 @@ let currentUser = null;
 let isAdmin = false;
 let questions = [];
 let savedIds = new Set();
+let colleges = [];
+let subjects = [];
 let modules = [];
+let lectures = [];
 let currentAuthMode = "login";
 let activeView = "bank";
 let currentLang = "en";
+let appLoadPromise = null;
 
 const $ = id => document.getElementById(id);
 
@@ -217,21 +229,41 @@ function esc(value) {
   }[c]));
 }
 
-function message(id, text, good=false) {
+function message(id, text, good = false) {
   const el = $(id);
   if (!el) return;
-  el.textContent = text;
+  el.textContent = text || "";
   el.style.color = good ? "#70e4c9" : "#ff9aa7";
 }
 
 function show(id) { $(id)?.classList.remove("hidden"); }
 function hide(id) { $(id)?.classList.add("hidden"); }
-
 function openModal(id) { show(id); }
 function closeModal(id) { hide(id); }
 
+function setOptions(selectId, rows, placeholder, labelFn = row => row.name_en) {
+  const select = $(selectId);
+  if (!select) return;
+  select.innerHTML = `<option value="">${esc(placeholder)}</option>` +
+    rows.map(row => `<option value="${esc(row.id)}">${esc(labelFn(row))}</option>`).join("");
+  select.disabled = rows.length === 0;
+}
+
+function resetSelect(selectId, placeholder) {
+  const select = $(selectId);
+  select.innerHTML = `<option value="">${esc(placeholder)}</option>`;
+  select.value = "";
+  select.disabled = true;
+}
+
 document.querySelectorAll("[data-close]").forEach(btn => {
   btn.addEventListener("click", () => closeModal(btn.dataset.close));
+});
+
+document.querySelectorAll(".modal-back").forEach(backdrop => {
+  backdrop.addEventListener("click", event => {
+    if (event.target === backdrop) closeModal(backdrop.id);
+  });
 });
 
 function setAuthMode(mode) {
@@ -247,18 +279,17 @@ function setAuthMode(mode) {
 $("loginTab").addEventListener("click", () => setAuthMode("login"));
 $("signupTab").addEventListener("click", () => setAuthMode("signup"));
 
-$("authForm").addEventListener("submit", async e => {
-  e.preventDefault();
+$("authForm").addEventListener("submit", async event => {
+  event.preventDefault();
   const email = $("authEmail").value.trim();
   const password = $("authPassword").value;
   const fullName = $("fullName").value.trim();
 
   $("authSubmit").disabled = true;
-  message("authMsg", "Please wait...");
+  message("authMsg", "Please wait...", true);
 
   try {
     let result;
-
     if (currentAuthMode === "signup") {
       result = await db.auth.signUp({
         email,
@@ -268,82 +299,92 @@ $("authForm").addEventListener("submit", async e => {
     } else {
       result = await db.auth.signInWithPassword({ email, password });
     }
-
     if (result.error) throw result.error;
 
     if (currentAuthMode === "signup" && !result.data.session) {
       message("authMsg", "Account created. Check your email to confirm it, then sign in.", true);
-    } else {
+    } else if (result.data.session) {
       await loadApp();
     }
-  } catch (err) {
-    message("authMsg", err.message || "Authentication failed.");
+  } catch (error) {
+    message("authMsg", error.message || "Authentication failed.");
   } finally {
     $("authSubmit").disabled = false;
   }
 });
 
 $("logoutBtn").addEventListener("click", async () => {
-  await db.auth.signOut();
+  const { error } = await db.auth.signOut();
+  if (error) {
+    alert("Sign out failed: " + error.message);
+    return;
+  }
   currentUser = null;
   isAdmin = false;
-  show("authView");
+  questions = [];
+  savedIds = new Set();
   hide("appView");
+  show("authView");
   hide("logoutBtn");
   $("userLabel").textContent = "";
 });
 
 async function loadApp() {
-  const { data, error } = await db.auth.getUser();
-  if (error || !data.user) {
-    show("authView");
-    hide("appView");
-    return;
+  if (appLoadPromise) return appLoadPromise;
+
+  appLoadPromise = (async () => {
+    const { data, error } = await db.auth.getUser();
+    if (error || !data?.user) {
+      currentUser = null;
+      show("authView");
+      hide("appView");
+      hide("logoutBtn");
+      return;
+    }
+
+    currentUser = data.user;
+    const roleResult = await db.rpc("is_admin");
+    isAdmin = !roleResult.error && roleResult.data === true;
+
+    hide("authView");
+    show("appView");
+    show("logoutBtn");
+    $("userLabel").textContent = currentUser.email || "";
+    $("rolePill").textContent = isAdmin ? "ADMIN WORKSPACE" : "STUDENT WORKSPACE";
+
+    $("adminTab").classList.toggle("hidden", !isAdmin);
+    $("addQuestionBtn").classList.toggle("hidden", !isAdmin);
+    $("addExamBtn").classList.toggle("hidden", !isAdmin);
+
+    const results = await Promise.allSettled([
+      loadQuestions(),
+      loadSaved(),
+      loadModules(),
+      loadProfile(),
+      loadExams(),
+      loadStats()
+    ]);
+
+    const failed = results.filter(result => result.status === "rejected");
+    if (failed.length) console.error("Some dashboard sections failed to load:", failed);
+  })();
+
+  try {
+    await appLoadPromise;
+  } finally {
+    appLoadPromise = null;
   }
-
-  currentUser = data.user;
-
-  const roleResult = await db.rpc("is_admin");
-  isAdmin = !roleResult.error && roleResult.data === true;
-
-  hide("authView");
-  show("appView");
-  show("logoutBtn");
-
-  $("userLabel").textContent = currentUser.email || "";
-  $("rolePill").textContent = isAdmin ? "ADMIN WORKSPACE" : "STUDENT WORKSPACE";
-
-  if (isAdmin) {
-    show("adminTab");
-    show("addQuestionBtn");
-    show("addExamBtn");
-  } else {
-    hide("adminTab");
-    hide("addQuestionBtn");
-    hide("addExamBtn");
-  }
-
-  await Promise.all([
-    loadQuestions(),
-    loadSaved(),
-    loadModules(),
-    loadProfile(),
-    loadExams(),
-    loadStats()
-  ]);
 }
 
 async function loadQuestions() {
-  const { data, error } = await db
-    .from("questions")
+  const { data, error } = await db.from("questions")
     .select("*")
     .order("created_at", { ascending: false })
     .limit(500);
 
   if (error) {
-    $("questionList").innerHTML =
-      `<div class="empty">Could not load questions: ${esc(error.message)}</div>`;
-    return;
+    $("questionList").innerHTML = `<div class="empty">Could not load questions: ${esc(error.message)}</div>`;
+    throw error;
   }
 
   questions = data || [];
@@ -355,43 +396,40 @@ async function loadQuestions() {
 
 function normalizeOptions(options) {
   if (Array.isArray(options)) {
-    return options.map((item, i) => {
+    return options.map((item, index) => {
       if (typeof item === "string") {
         const match = item.match(/^([A-Z])\s*:\s*(.*)$/);
-        return match
-          ? { key: match[1], text: match[2] }
-          : { key: String.fromCharCode(65+i), text: item };
+        return match ? { key: match[1], text: match[2] } :
+          { key: String.fromCharCode(65 + index), text: item };
       }
       return {
-        key: item.key || item.id || String.fromCharCode(65+i),
-        text: item.text || item.label || item.value || ""
+        key: item?.key || item?.id || String.fromCharCode(65 + index),
+        text: item?.text || item?.label || item?.value || ""
       };
     });
   }
-
   if (options && typeof options === "object") {
     return Object.entries(options).map(([key, value]) => ({
       key,
-      text: typeof value === "string"
-        ? value
-        : value?.text || value?.label || ""
+      text: typeof value === "string" ? value : value?.text || value?.label || ""
     }));
   }
-
   return [];
 }
 
-
-function renderQuestions(target="questionList", list=questions) {
+function renderQuestions(target = "questionList", list = questions) {
   const search = $("searchBox").value.toLowerCase().trim();
   const moduleValue = $("moduleFilter").value;
   const difficulty = $("difficultyFilter").value;
 
-  let filtered = list.filter(q => {
-    const text = `${q.question_en || ""} ${q.question_ar || ""} ${q.topic || ""}`.toLowerCase();
-    return (!search || text.includes(search))
-      && (!moduleValue || q.module === moduleValue)
-      && (!difficulty || q.difficulty === difficulty);
+  const filtered = list.filter(question => {
+    const searchable = `${question.question_en || ""} ${question.question_ar || ""} ${question.topic || ""}`.toLowerCase();
+    const moduleMatches = !moduleValue ||
+      String(question.module_id || "") === moduleValue ||
+      (!question.module_id && question.module === modules.find(m => m.id === moduleValue)?.name_en);
+    return (!search || searchable.includes(search)) &&
+      moduleMatches &&
+      (!difficulty || question.difficulty === difficulty);
   });
 
   if (!filtered.length) {
@@ -399,259 +437,253 @@ function renderQuestions(target="questionList", list=questions) {
     return;
   }
 
-  $(target).innerHTML = filtered.map(q => {
-    const opts = normalizeOptions(q.options);
-    const optionsHTML = opts.map(o => `
+  $(target).innerHTML = filtered.map(question => {
+    const optionsHTML = normalizeOptions(question.options).map(option => `
       <label class="option">
-        <input type="radio" name="answer_${esc(q.id)}" value="${esc(o.key)}">
-        <span><b>${esc(o.key)}.</b> ${esc(o.text)}</span>
-      </label>
-    `).join("");
+        <input type="radio" name="answer_${esc(question.id)}" value="${esc(option.key)}">
+        <span><b>${esc(option.key)}.</b> ${esc(option.text)}</span>
+      </label>`).join("");
 
-    const isSaved = savedIds.has(q.id);
+    const saved = savedIds.has(question.id);
+    const moduleName = question.module || modules.find(m => m.id === question.module_id)?.name_en || "General";
+    const questionText = currentLang === "ar" && question.question_ar
+      ? question.question_ar : question.question_en;
 
     return `
-      <article class="qcard" data-question="${esc(q.id)}">
+      <article class="qcard" data-question="${esc(question.id)}">
         <div class="qmeta">
-          <span class="pill">${esc(q.module || "General")}</span>
-          <span>${esc(q.difficulty || "Unspecified")}</span>
-          ${q.topic ? `<span>${esc(q.topic)}</span>` : ""}
+          <span class="pill">${esc(moduleName)}</span>
+          <span>${esc(question.difficulty || "Unspecified")}</span>
+          ${question.topic ? `<span>${esc(question.topic)}</span>` : ""}
         </div>
-        <div class="qtext">${esc(currentLang === "ar" && q.question_ar ? q.question_ar : q.question_en)}</div>
+        <div class="qtext">${esc(questionText)}</div>
         ${optionsHTML}
         <div class="actions">
-          <button class="btn primary" data-answer="${esc(q.id)}">Check answer</button>
-          <button class="btn" data-save="${esc(q.id)}">${isSaved ? "★ Saved" : "☆ Save"}</button>
+          <button class="btn primary" type="button" data-answer="${esc(question.id)}">Check answer</button>
+          <button class="btn" type="button" data-save="${esc(question.id)}">${saved ? "★ Saved" : "☆ Save"}</button>
         </div>
-        <div id="feedback_${esc(q.id)}"></div>
+        <div id="feedback_${esc(question.id)}"></div>
         <details style="margin-top:10px">
           <summary class="muted">Explanation and source</summary>
           <p>Submit your answer to check it.</p>
-          <p class="small muted">${esc(q.source_name || "Source not provided")}${q.source_page ? " · Page " + esc(q.source_page) : ""}</p>
+          <p class="small muted">${esc(question.source_name || "Source not provided")}${question.source_page ? " · Page " + esc(question.source_page) : ""}</p>
         </details>
-      </article>
-    `;
+      </article>`;
   }).join("");
 }
 
+async function handleQuestionListClick(event) {
+  const answerButton = event.target.closest("[data-answer]");
+  const saveButton = event.target.closest("[data-save]");
 
-$("questionList").addEventListener("click", async e => {
-  const answerBtn = e.target.closest("[data-answer]");
-  const saveBtn = e.target.closest("[data-save]");
-if (answerBtn) {
-    const id = answerBtn.dataset.answer;
-    const selected = document.querySelector(`input[name="answer_${CSS.escape(id)}"]:checked`);
-
+  if (answerButton) {
+    const questionId = answerButton.dataset.answer;
+    const selected = document.querySelector(`input[name="answer_${CSS.escape(questionId)}"]:checked`);
     if (!selected) {
-      message(`feedback_${id}`, "Choose an answer first.");
+      message(`feedback_${questionId}`, "Choose an answer first.");
       return;
     }
 
-    answerBtn.disabled = true;
-
-    const feedback = $(`feedback_${id}`);
+    answerButton.disabled = true;
+    const feedback = $(`feedback_${questionId}`);
+    feedback.className = "status";
     feedback.textContent = "Checking...";
 
-    const { data: result, error } = await db.rpc(
-      "check_question_answer_with_explanation",
-      {
-        p_question_id: id,
+    try {
+      const { data, error } = await db.rpc("check_question_answer_with_explanation", {
+        p_question_id: questionId,
         p_selected_option: selected.value
+      });
+      if (error) throw error;
+      if (!data || typeof data.is_correct !== "boolean") {
+        throw new Error("The answer-check function returned an unexpected response.");
       }
-    );
 
-    answerBtn.disabled = false;
+      const explanation = currentLang === "ar"
+        ? (data.explanation_ar || data.explanation_en || "No explanation added.")
+        : (data.explanation_en || "No explanation added.");
 
-    if (error) {
+      feedback.className = `feedback ${data.is_correct ? "good" : "bad"}`;
+      feedback.textContent = (data.is_correct ? "Correct answer! " : "Incorrect. ") + explanation;
+      await loadStats();
+    } catch (error) {
+      feedback.className = "feedback bad";
       feedback.textContent = "Could not check answer: " + error.message;
-      return;
+    } finally {
+      answerButton.disabled = false;
     }
-
-    const correct = result.is_correct;
-    const explanation = currentLang === "ar"
-      ? (result.explanation_ar || result.explanation_en || "No explanation added.")
-      : (result.explanation_en || "No explanation added.");
-
-    feedback.className = `feedback ${correct ? "good" : "bad"}`;
-    feedback.textContent = (correct ? "Correct answer! " : "Incorrect. ") + explanation;
-
-    await loadStats();
   }
-  
 
-  if (saveBtn) {
-    await toggleSaved(saveBtn.dataset.save);
-  }
-});
+  if (saveButton) await toggleSaved(saveButton.dataset.save);
+}
+
+$("questionList").addEventListener("click", handleQuestionListClick);
+$("savedList").addEventListener("click", handleQuestionListClick);
 
 async function loadSaved() {
-  const { data, error } = await db
-    .from("saved_questions")
+  if (!currentUser) return;
+  const { data, error } = await db.from("saved_questions")
     .select("question_id")
     .eq("student_id", currentUser.id);
 
   if (error) {
-    console.error(error);
+    console.error("Could not load saved questions:", error);
+    $("savedList").innerHTML = `<div class="empty">Could not load saved questions: ${esc(error.message)}</div>`;
     return;
   }
 
-  savedIds = new Set((data || []).map(x => x.question_id));
+  savedIds = new Set((data || []).map(row => row.question_id));
   $("statSaved").textContent = savedIds.size;
+  if (activeView === "saved") renderSaved();
+  else renderQuestions();
 }
 
 async function toggleSaved(questionId) {
-  if (savedIds.has(questionId)) {
-    const { error } = await db.from("saved_questions")
-      .delete()
-      .eq("student_id", currentUser.id)
-      .eq("question_id", questionId);
-
-    if (error) return alert(error.message);
-  } else {
-    const { error } = await db.from("saved_questions").insert({
-      student_id: currentUser.id,
-      question_id: questionId
-    });
-
-    if (error) return alert(error.message);
+  if (!currentUser) return;
+  try {
+    if (savedIds.has(questionId)) {
+      const { error } = await db.from("saved_questions").delete()
+        .eq("student_id", currentUser.id)
+        .eq("question_id", questionId);
+      if (error) throw error;
+    } else {
+      const { error } = await db.from("saved_questions").insert({
+        student_id: currentUser.id,
+        question_id: questionId
+      });
+      if (error) throw error;
+    }
+    await loadSaved();
+  } catch (error) {
+    alert("Could not update saved question: " + error.message);
   }
-
-  await loadSaved();
-  renderQuestions();
-
-  if (activeView === "saved") renderSaved();
 }
 
 function renderSaved() {
-  const list = questions.filter(q => savedIds.has(q.id));
+  const list = questions.filter(question => savedIds.has(question.id));
   renderQuestions("savedList", list);
 }
-$("savedList").addEventListener("click", async e => {
-  const answerBtn = e.target.closest("[data-answer]");
-  const saveBtn = e.target.closest("[data-save]");
 
-  if (answerBtn) {
-    const id = answerBtn.dataset.answer;
-    const selected = document.querySelector(
-      `input[name="answer_${CSS.escape(id)}"]:checked`
-    );
+async function loadModules() {
+  const [collegeResult, subjectResult, moduleResult, lectureResult] = await Promise.all([
+    db.from("colleges").select("id,name_en,name_ar,code").order("name_en"),
+    db.from("subjects").select("id,college_id,name_en,name_ar,code").order("name_en"),
+    db.from("academic_modules").select("id,subject_id,name_en,name_ar,code").order("name_en"),
+    db.from("academic_lectures").select("id,module_id,name_en,name_ar,lecture_number").order("lecture_number")
+  ]);
 
-    if (!selected) {
-      message(`feedback_${id}`, "Choose an answer first.");
-      return;
-    }
-
-    answerBtn.disabled = true;
-    const feedback = $(`feedback_${id}`);
-    feedback.textContent = "Checking...";
-
-    const { data: result, error } = await db.rpc(
-      "check_question_answer_with_explanation",
-      {
-        p_question_id: id,
-        p_selected_option: selected.value
-      }
-    );
-
-    answerBtn.disabled = false;
-
-    if (error) {
-      feedback.textContent = "Could not check answer: " + error.message;
-      return;
-    }
-
-    const correct = result.is_correct;
-    const explanation = currentLang === "ar"
-      ? (result.explanation_ar || result.explanation_en || "No explanation added.")
-      : (result.explanation_en || "No explanation added.");
-
-    feedback.className = `feedback ${correct ? "good" : "bad"}`;
-    feedback.textContent = (correct ? "Correct answer! " : "Incorrect. ") + explanation;
-
-    await loadStats();
+  const firstError = collegeResult.error || subjectResult.error || moduleResult.error || lectureResult.error;
+  if (firstError) {
+    message("adminMsg", "Could not load academic structure: " + firstError.message);
+    $("qCollege").innerHTML = '<option value="">Could not load colleges</option>';
+    resetSelect("qSubject", "Select college first");
+    resetSelect("qModule", "Select subject first");
+    resetSelect("qLecture", "Select module first");
+    throw firstError;
   }
 
-  if (saveBtn) {
-    await toggleSaved(saveBtn.dataset.save);
+  colleges = collegeResult.data || [];
+  subjects = subjectResult.data || [];
+  modules = moduleResult.data || [];
+  lectures = lectureResult.data || [];
+
+  setOptions("qCollege", colleges, colleges.length ? "Select college" : "No colleges found");
+  setOptions("moduleFilter", modules, "All modules");
+  setOptions("examModule", modules, "All modules");
+  $("adminModules").textContent = modules.length;
+
+  resetSelect("qSubject", "Select college first");
+  resetSelect("qModule", "Select subject first");
+  resetSelect("qLecture", "Select module first");
+
+  // When there is only one college, select it and load its subjects automatically.
+  if (colleges.length === 1) {
+    $("qCollege").value = colleges[0].id;
+    await loadSubjectsForCollege(colleges[0].id);
   }
-});
+}
 
-  $("qCollege").addEventListener("change", async () => {
-  const collegeId = $("qCollege").value;
-  $("qSubject").innerHTML = `<option value="">Loading...</option>`;
-
-  if (!collegeId) return;
-
-  const { data, error } = await db.from("subjects")
-    .select("id,name_en")
-    .eq("college_id", collegeId)
-    .order("name_en");
-
-  if (error) {
-    $("qSubject").innerHTML = `<option value="">Could not load</option>`;
+async function loadSubjectsForCollege(collegeId) {
+  resetSelect("qSubject", "Loading subjects...");
+  resetSelect("qModule", "Select subject first");
+  resetSelect("qLecture", "Select module first");
+  if (!collegeId) {
+    resetSelect("qSubject", "Select college first");
     return;
   }
 
-  $("qSubject").innerHTML = `<option value="">Select subject</option>` +
-    (data || []).map(s => `<option value="${esc(s.id)}">${esc(s.name_en)}</option>`).join("");
+  const rows = subjects.filter(subject => subject.college_id === collegeId);
+  setOptions("qSubject", rows, rows.length ? "Select subject" : "No subjects for this college");
+  if (rows.length === 1) {
+    $("qSubject").value = rows[0].id;
+    await loadModulesForSubject(rows[0].id);
+  }
+}
+
+async function loadModulesForSubject(subjectId) {
+  resetSelect("qModule", "Loading modules...");
+  resetSelect("qLecture", "Select module first");
+  if (!subjectId) {
+    resetSelect("qModule", "Select subject first");
+    return;
+  }
+
+  const rows = modules.filter(module => module.subject_id === subjectId);
+  setOptions("qModule", rows, rows.length ? "Select module" : "No modules for this subject");
+  if (rows.length === 1) {
+    $("qModule").value = rows[0].id;
+    await loadLecturesForModule(rows[0].id);
+  }
+}
+
+async function loadLecturesForModule(moduleId) {
+  resetSelect("qLecture", "Loading lectures...");
+  if (!moduleId) {
+    resetSelect("qLecture", "Select module first");
+    return;
+  }
+
+  const rows = lectures.filter(lecture => lecture.module_id === moduleId);
+  setOptions("qLecture", rows, rows.length ? "No lecture selected (optional)" : "No lectures added yet");
+  if (!rows.length) $("qLecture").disabled = true;
+}
+
+$("qCollege").addEventListener("change", async () => {
+  try { await loadSubjectsForCollege($("qCollege").value); }
+  catch (error) { message("questionMsg", error.message); }
 });
 
 $("qSubject").addEventListener("change", async () => {
-  const subjectId = $("qSubject").value;
-  $("qModule").innerHTML = `<option value="">Loading...</option>`;
-
-  if (!subjectId) return;
-
-  const { data, error } = await db.from("academic_modules")
-    .select("id,name_en")
-    .eq("subject_id", subjectId)
-    .order("name_en");
-
-  if (error) {
-    $("qModule").innerHTML = `<option value="">Could not load</option>`;
-    return;
-  }
-
-  $("qModule").innerHTML = `<option value="">Select module</option>` +
-    (data || []).map(m => `<option value="${esc(m.id)}">${esc(m.name_en)}</option>`).join("");
+  try { await loadModulesForSubject($("qSubject").value); }
+  catch (error) { message("questionMsg", error.message); }
 });
 
 $("qModule").addEventListener("change", async () => {
-  const moduleId = $("qModule").value;
-  $("qLecture").innerHTML = `<option value="">Loading...</option>`;
-
-  if (!moduleId) return;
-
-  const { data, error } = await db.from("academic_lectures")
-    .select("id,name_en,lecture_number")
-    .eq("module_id", moduleId)
-    .order("lecture_number");
-
-  if (error) {
-    $("qLecture").innerHTML = `<option value="">Could not load</option>`;
-    return;
-  }
-
-  $("qLecture").innerHTML = `<option value="">Select lecture</option>` +
-    (data || []).map(l => `<option value="${esc(l.id)}">${esc(l.name_en)}</option>`).join("");
+  try { await loadLecturesForModule($("qModule").value); }
+  catch (error) { message("questionMsg", error.message); }
 });
 
 async function loadProfile() {
+  if (!currentUser) return;
   const { data, error } = await db.from("profiles")
     .select("full_name")
     .eq("id", currentUser.id)
     .maybeSingle();
 
-  if (!error && data) $("profileName").value = data.full_name || "";
+  if (error) {
+    message("profileMsg", "Could not load profile: " + error.message);
+  } else if (data) {
+    $("profileName").value = data.full_name || "";
+  }
   $("profileEmail").textContent = currentUser.email || "";
 }
 
 $("saveProfile").addEventListener("click", async () => {
+  if (!currentUser) return;
   const { error } = await db.from("profiles").upsert({
     id: currentUser.id,
     full_name: $("profileName").value.trim()
   });
-
   message("profileMsg", error ? error.message : "Profile saved.", !error);
 });
 
@@ -662,186 +694,231 @@ async function loadExams() {
     .order("created_at", { ascending: false });
 
   if (error) {
-    $("examList").textContent = error.message;
-    return;
+    $("examList").textContent = "Could not load exams: " + error.message;
+    throw error;
   }
 
-  $("statExams").textContent = (data || []).length;
-
-  $("examList").innerHTML = data?.length
-    ? data.map(exam => `
+  const exams = data || [];
+  $("statExams").textContent = exams.length;
+  $("examList").innerHTML = exams.length
+    ? exams.map(exam => `
       <div class="qcard">
-        <b>${esc(exam.title_en)}</b>
-        <p class="muted small">${esc(exam.duration_minutes)} minutes · ${esc(exam.total_questions)} questions</p>
-      </div>
-    `).join("")
-    : `<div class="empty">No published exams yet.</div>`;
+        <b>${esc(currentLang === "ar" && exam.title_ar ? exam.title_ar : exam.title_en)}</b>
+        <p class="muted small">${esc(exam.duration_minutes)} minutes · ${esc(exam.total_questions ?? 0)} questions</p>
+      </div>`).join("")
+    : '<div class="empty">No published exams yet.</div>';
 }
 
 async function loadStats() {
-  const { count: savedCount } = await db.from("saved_questions")
-    .select("*", { count: "exact", head: true })
-    .eq("student_id", currentUser.id);
+  if (!currentUser) return;
+  const [savedResult, attemptsResult] = await Promise.all([
+    db.from("saved_questions").select("*", { count: "exact", head: true }).eq("student_id", currentUser.id),
+    db.from("question_attempts").select("*", { count: "exact", head: true }).eq("student_id", currentUser.id)
+  ]);
 
-  const { count: attemptCount } = await db.from("question_attempts")
-    .select("*", { count: "exact", head: true })
-    .eq("student_id", currentUser.id);
-
-  $("statSaved").textContent = savedCount || 0;
-  $("statAttempts").textContent = attemptCount || 0;
+  if (savedResult.error) console.error("Saved count failed:", savedResult.error);
+  if (attemptsResult.error) console.error("Attempts count failed:", attemptsResult.error);
+  $("statSaved").textContent = savedResult.count || 0;
+  $("statAttempts").textContent = attemptsResult.count || 0;
 }
 
 function switchView(view) {
+  if (view === "admin" && !isAdmin) return;
   activeView = view;
-
   ["bank","saved","exams","profile","admin"].forEach(name => {
     $(`${name}View`).classList.toggle("hidden", name !== view);
   });
-
-  document.querySelectorAll("#mainTabs .tab").forEach(btn => {
-    btn.classList.toggle("active", btn.dataset.view === view);
+  document.querySelectorAll("#mainTabs .tab").forEach(button => {
+    button.classList.toggle("active", button.dataset.view === view);
   });
-
   if (view === "saved") renderSaved();
 }
 
-$("mainTabs").addEventListener("click", e => {
-  const tab = e.target.closest("[data-view]");
+$("mainTabs").addEventListener("click", event => {
+  const tab = event.target.closest("[data-view]");
   if (tab) switchView(tab.dataset.view);
 });
 
-$("searchBox").addEventListener("input", () => renderQuestions());
-$("moduleFilter").addEventListener("change", () => renderQuestions());
-$("difficultyFilter").addEventListener("change", () => renderQuestions());
+$("searchBox").addEventListener("input", () => {
+  renderQuestions();
+  if (activeView === "saved") renderSaved();
+});
+$("moduleFilter").addEventListener("change", () => {
+  renderQuestions();
+  if (activeView === "saved") renderSaved();
+});
+$("difficultyFilter").addEventListener("change", () => {
+  renderQuestions();
+  if (activeView === "saved") renderSaved();
+});
 
 function openQuestionForm() {
+  if (!isAdmin) return;
   $("questionForm").reset();
   message("questionMsg", "");
+  resetSelect("qSubject", "Select college first");
+  resetSelect("qModule", "Select subject first");
+  resetSelect("qLecture", "Select module first");
+  if (colleges.length === 1) {
+    $("qCollege").value = colleges[0].id;
+    loadSubjectsForCollege(colleges[0].id).catch(error => message("questionMsg", error.message));
+  } else {
+    $("qCollege").value = "";
+  }
   openModal("questionModal");
 }
 
 $("addQuestionBtn").addEventListener("click", openQuestionForm);
 $("adminAddQuestion").addEventListener("click", openQuestionForm);
 
-$("questionForm").addEventListener("submit", async e => {
-  e.preventDefault();
-
-  if (!isAdmin) {
+$("questionForm").addEventListener("submit", async event => {
+  event.preventDefault();
+  if (!isAdmin || !currentUser) {
     message("questionMsg", "Admin permission required.");
     return;
   }
 
-  const options = {};
-  $("qOptions").value.split("\n").map(x => x.trim()).filter(Boolean).forEach(line => {
-    const match = line.match(/^([A-Z])\s*:\s*(.+)$/);
-    if (match) options[match[1]] = match[2];
-  });
+  const saveButton = $("saveQuestionBtn");
+  saveButton.disabled = true;
+  message("questionMsg", "Saving question...", true);
 
-  if (Object.keys(options).length < 2) {
-    message("questionMsg", "Enter at least two options using A: text format.");
-    return;
-  }
+  try {
+    const options = {};
+    const lines = $("qOptions").value.split(/\r?\n/).map(line => line.trim()).filter(Boolean);
+    for (const line of lines) {
+      const match = line.match(/^([A-Z])\s*:\s*(.+)$/);
+      if (!match) throw new Error(`Invalid option line: "${line}". Use the format A: option text.`);
+      if (Object.prototype.hasOwnProperty.call(options, match[1])) {
+        throw new Error("Duplicate option key: " + match[1]);
+      }
+      options[match[1]] = match[2].trim();
+    }
 
-  const correct = $("qCorrect").value.trim().toUpperCase();
-  if (!options[correct]) {
-    message("questionMsg", "Correct option must match one of the option keys.");
-    return;
-  }
+    if (Object.keys(options).length < 2) throw new Error("Enter at least two options.");
+    const correct = $("qCorrect").value.trim().toUpperCase();
+    if (!options[correct]) throw new Error("Correct option must match one of the option keys.");
 
-  const moduleId = $("qModule").value;
-  const selectedModule = modules.find(m => m.id === moduleId);
+    const collegeId = $("qCollege").value;
+    const subjectId = $("qSubject").value;
+    const moduleId = $("qModule").value;
+    const selectedModule = modules.find(module => module.id === moduleId);
 
-  if (!selectedModule) {
-    message("questionMsg", "Select a module first.");
-    return;
-  }
+    if (!collegeId || !subjectId || !selectedModule) {
+      throw new Error("Select a college, subject, and module.");
+    }
+    if (selectedModule.subject_id !== subjectId) {
+      throw new Error("The selected module does not belong to the selected subject. Please select the module again.");
+    }
+
+    const lectureId = $("qLecture").value || null;
+    if (lectureId && !lectures.some(lecture => lecture.id === lectureId && lecture.module_id === moduleId)) {
+      throw new Error("The selected lecture does not belong to the selected module.");
+    }
 
     const payload = {
-    module: selectedModule.name_en,
-    module_id: moduleId,
-    college_id: $("qCollege").value || null,
-    subject_id: $("qSubject").value || null,
-    lecture_id: $("qLecture").value || null,
-    question_en: $("qEn").value.trim(),
-    question_ar: $("qAr").value.trim() || null,
-    options,
-    difficulty: $("qDifficulty").value,
-    topic: $("qTopic").value.trim() || null,
-    source_name: $("qSource").value.trim() || null,
-    source_page: $("qPage").value ? Number($("qPage").value) : null
-  };
+      module: selectedModule.name_en,
+      module_id: moduleId,
+      college_id: collegeId,
+      subject_id: subjectId,
+      lecture_id: lectureId,
+      question_en: $("qEn").value.trim(),
+      question_ar: $("qAr").value.trim() || null,
+      options,
+      difficulty: $("qDifficulty").value,
+      topic: $("qTopic").value.trim() || null,
+      source_name: $("qSource").value.trim() || null,
+      source_page: $("qPage").value ? Number($("qPage").value) : null
+    };
 
-  const { data: inserted, error } = await db
-    .from("questions")
-    .insert(payload)
-    .select("id")
-    .single();
+    const { data: inserted, error: insertError } = await db.from("questions")
+      .insert(payload).select("id").single();
+    if (insertError) throw insertError;
 
-  if (error) {
-    message("questionMsg", error.message);
-    return;
+    const { error: keyError } = await db.from("question_answer_keys").insert({
+      question_id: inserted.id,
+      correct_option: correct,
+      explanation_en: $("qExplanation").value.trim() || null,
+      explanation_ar: null
+    });
+
+    if (keyError) {
+      // Best-effort cleanup so a failed answer-key insert does not leave an unusable question.
+      const { error: cleanupError } = await db.from("questions").delete().eq("id", inserted.id);
+      const extra = cleanupError ? " Cleanup also failed: " + cleanupError.message : " The incomplete question was removed.";
+      throw new Error("Question was inserted but its answer key could not be saved: " + keyError.message + extra);
+    }
+
+    message("questionMsg", "Question added successfully.", true);
+    await Promise.all([loadQuestions(), loadStats()]);
+    setTimeout(() => closeModal("questionModal"), 900);
+  } catch (error) {
+    message("questionMsg", error.message || "Could not save question.");
+  } finally {
+    saveButton.disabled = false;
   }
-
-  const { error: keyError } = await db
-    .from("question_answer_keys")
-    .insert({
-  question_id: inserted.id,
-  correct_option: correct,
-  explanation_en: $("qExplanation").value.trim() || null,
-  explanation_ar: null
-});
-
-  if (keyError) {
-    message("questionMsg", "Question saved, but answer key failed: " + keyError.message);
-    return;
-  }
-
-  message("questionMsg", "Question added successfully.", true);
-  await loadQuestions();
-  await loadStats();
-  setTimeout(() => closeModal("questionModal"), 900);
 });
 
 $("addExamBtn").addEventListener("click", () => {
+  if (!isAdmin) return;
   $("examForm").reset();
   message("examMsg", "");
   openModal("examModal");
 });
 
-$("examForm").addEventListener("submit", async e => {
-  e.preventDefault();
-
-  if (!isAdmin) return;
-
-  const moduleId = $("examModule").value || null;
-
-  const { error } = await db.from("exams").insert({
-    title_en: $("examTitle").value.trim(),
-    title_ar: $("examTitleAr").value.trim() || null,
-    module_id: moduleId,
-    duration_minutes: Number($("examDuration").value),
-    is_published: $("examPublish").checked,
-    created_by: currentUser.id
-  });
-
-  if (error) {
-    message("examMsg", error.message);
+$("examForm").addEventListener("submit", async event => {
+  event.preventDefault();
+  if (!isAdmin || !currentUser) {
+    message("examMsg", "Admin permission required.");
     return;
   }
 
-  message("examMsg", "Exam created.", true);
-  await loadExams();
-  setTimeout(() => closeModal("examModal"), 900);
+  const saveButton = $("saveExamBtn");
+  saveButton.disabled = true;
+  try {
+    const duration = Number($("examDuration").value);
+    if (!Number.isInteger(duration) || duration < 1 || duration > 240) {
+      throw new Error("Duration must be a whole number between 1 and 240 minutes.");
+    }
+
+    const moduleId = $("examModule").value || null;
+    if (moduleId && !modules.some(module => module.id === moduleId)) {
+      throw new Error("Please select a valid module.");
+    }
+
+    const { error } = await db.from("exams").insert({
+      title_en: $("examTitle").value.trim(),
+      title_ar: $("examTitleAr").value.trim() || null,
+      module_id: moduleId,
+      duration_minutes: duration,
+      is_published: $("examPublish").checked,
+      created_by: currentUser.id
+    });
+    if (error) throw error;
+
+    message("examMsg", "Practice exam listing created.", true);
+    await loadExams();
+    setTimeout(() => closeModal("examModal"), 900);
+  } catch (error) {
+    message("examMsg", error.message || "Could not create exam.");
+  } finally {
+    saveButton.disabled = false;
+  }
 });
 
 $("refreshBtn").addEventListener("click", async () => {
-  await Promise.all([
-    loadQuestions(),
-    loadModules(),
-    loadExams(),
-    loadSaved(),
-    loadStats()
-  ]);
+  if (!isAdmin) return;
+  $("refreshBtn").disabled = true;
+  message("adminMsg", "Refreshing...");
+  try {
+    await Promise.all([
+      loadQuestions(), loadModules(), loadExams(), loadSaved(), loadStats()
+    ]);
+    message("adminMsg", "Data refreshed successfully.", true);
+  } catch (error) {
+    message("adminMsg", "Refresh failed: " + error.message);
+  } finally {
+    $("refreshBtn").disabled = false;
+  }
 });
 
 $("langBtn").addEventListener("click", () => {
@@ -850,21 +927,38 @@ $("langBtn").addEventListener("click", () => {
   document.documentElement.lang = currentLang;
   document.documentElement.dir = currentLang === "ar" ? "rtl" : "ltr";
   renderQuestions();
+  if (activeView === "saved") renderSaved();
+  loadExams().catch(error => console.error(error));
 });
 
 async function start() {
-  const { data } = await db.auth.getSession();
-  if (data.session) {
-    await loadApp();
-  } else {
+  try {
+    const { data, error } = await db.auth.getSession();
+    if (error) throw error;
+    if (data?.session) {
+      await loadApp();
+    } else {
+      show("authView");
+      hide("appView");
+    }
+  } catch (error) {
     show("authView");
     hide("appView");
+    message("authMsg", "Startup error: " + error.message);
   }
 }
 
 db.auth.onAuthStateChange((event, session) => {
   if (event === "SIGNED_IN" && session) {
-    setTimeout(() => loadApp(), 0);
+    setTimeout(() => loadApp().catch(error => console.error("App loading failed:", error)), 0);
+  }
+  if (event === "SIGNED_OUT") {
+    currentUser = null;
+    isAdmin = false;
+    hide("appView");
+    show("authView");
+    hide("logoutBtn");
+    $("userLabel").textContent = "";
   }
 });
 
