@@ -438,10 +438,8 @@ function renderQuestions(target="questionList", list=questions) {
 $("questionList").addEventListener("click", async e => {
   const answerBtn = e.target.closest("[data-answer]");
   const saveBtn = e.target.closest("[data-save]");
-
-  if (answerBtn) {
+if (answerBtn) {
     const id = answerBtn.dataset.answer;
-    const q = questions.find(item => item.id === id);
     const selected = document.querySelector(`input[name="answer_${CSS.escape(id)}"]:checked`);
 
     if (!selected) {
@@ -454,8 +452,8 @@ $("questionList").addEventListener("click", async e => {
     const feedback = $(`feedback_${id}`);
     feedback.textContent = "Checking...";
 
-    const { data: correct, error } = await db.rpc(
-      "check_question_answer",
+    const { data: result, error } = await db.rpc(
+      "check_question_answer_with_explanation",
       {
         p_question_id: id,
         p_selected_option: selected.value
@@ -469,13 +467,17 @@ $("questionList").addEventListener("click", async e => {
       return;
     }
 
+    const correct = result.is_correct;
+    const explanation = currentLang === "ar"
+      ? (result.explanation_ar || result.explanation_en || "No explanation added.")
+      : (result.explanation_en || "No explanation added.");
+
     feedback.className = `feedback ${correct ? "good" : "bad"}`;
-    feedback.textContent = correct
-      ? "Correct answer!"
-      : "Incorrect. Review this topic.";
+    feedback.textContent = (correct ? "Correct answer! " : "Incorrect. ") + explanation;
 
     await loadStats();
   }
+  
 
   if (saveBtn) {
     await toggleSaved(saveBtn.dataset.save);
@@ -524,48 +526,59 @@ function renderSaved() {
   const list = questions.filter(q => savedIds.has(q.id));
   renderQuestions("savedList", list);
 }
+$("savedList").addEventListener("click", async e => {
+  const answerBtn = e.target.closest("[data-answer]");
+  const saveBtn = e.target.closest("[data-save]");
 
-async function loadModules() {
-  const { data, error } = await db
-    .from("academic_modules")
-    .select("id,name_en,name_ar")
-    .order("name_en");
+  if (answerBtn) {
+    const id = answerBtn.dataset.answer;
+    const selected = document.querySelector(
+      `input[name="answer_${CSS.escape(id)}"]:checked`
+    );
 
-  if (error) {
-    console.error(error);
-    return;
+    if (!selected) {
+      message(`feedback_${id}`, "Choose an answer first.");
+      return;
+    }
+
+    answerBtn.disabled = true;
+    const feedback = $(`feedback_${id}`);
+    feedback.textContent = "Checking...";
+
+    const { data: result, error } = await db.rpc(
+      "check_question_answer_with_explanation",
+      {
+        p_question_id: id,
+        p_selected_option: selected.value
+      }
+    );
+
+    answerBtn.disabled = false;
+
+    if (error) {
+      feedback.textContent = "Could not check answer: " + error.message;
+      return;
+    }
+
+    const correct = result.is_correct;
+    const explanation = currentLang === "ar"
+      ? (result.explanation_ar || result.explanation_en || "No explanation added.")
+      : (result.explanation_en || "No explanation added.");
+
+    feedback.className = `feedback ${correct ? "good" : "bad"}`;
+    feedback.textContent = (correct ? "Correct answer! " : "Incorrect. ") + explanation;
+
+    await loadStats();
   }
 
-  modules = data || [];
-  const options = modules.map(m =>
-    `<option value="${esc(m.name_en)}">${esc(m.name_en)}</option>`
-  ).join("");
+  if (saveBtn) {
+    await toggleSaved(saveBtn.dataset.save);
+  }
+});
 
-  $("moduleFilter").innerHTML = `<option value="">All modules</option>${options}`;
-
-  const moduleSelect = $("qModule");
-  const examSelect = $("examModule");
-
-  moduleSelect.innerHTML = `<option value="">Select module</option>` +
-    modules.map(m => `<option value="${esc(m.id)}">${esc(m.name_en)}</option>`).join("");
-
-  examSelect.innerHTML = `<option value="">Select module</option>` +
-    modules.map(m => `<option value="${esc(m.id)}">${esc(m.name_en)}</option>`).join("");
-
-  $("adminModules").textContent = modules.length;
-
-  const { data: colleges } = await db.from("colleges").select("id,name_en");
-  $("qCollege").innerHTML = `<option value="">Select college</option>` +
-    (colleges || []).map(c => `<option value="${esc(c.id)}">${esc(c.name_en)}</option>`).join("");
-
-  $("qSubject").innerHTML = `<option value="">Select subject</option>`;
-  $("qLecture").innerHTML = `<option value="">Select lecture</option>`;
-}
-
-$("qCollege").addEventListener("change", async () => {
+  $("qCollege").addEventListener("change", async () => {
   const collegeId = $("qCollege").value;
   $("qSubject").innerHTML = `<option value="">Loading...</option>`;
-  $("qModule").innerHTML = `<option value="">Select module</option>`;
 
   if (!collegeId) return;
 
@@ -772,9 +785,11 @@ $("questionForm").addEventListener("submit", async e => {
   const { error: keyError } = await db
     .from("question_answer_keys")
     .insert({
-      question_id: inserted.id,
-      correct_option: correct
-    });
+  question_id: inserted.id,
+  correct_option: correct,
+  explanation_en: $("qExplanation").value.trim() || null,
+  explanation_ar: null
+});
 
   if (keyError) {
     message("questionMsg", "Question saved, but answer key failed: " + keyError.message);
