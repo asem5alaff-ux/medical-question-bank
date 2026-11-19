@@ -194,7 +194,18 @@ select:disabled{opacity:.6}
     </form>
   </div>
 </div>
-
+<div id="examQuestionsModal" class="modal-back hidden">
+  <div class="modal">
+    <div class="modal-head">
+      <h2>Manage Exam Questions</h2>
+      <button class="btn" data-close="examQuestionsModal" type="button">✕</button>
+    </div>
+    <input type="hidden" id="manageExamId">
+    <div id="examQuestionsList"></div>
+    <button class="btn primary" id="saveExamQuestionsBtn" type="button">Save Questions</button>
+    <p id="examQuestionsMsg" class="status" role="status"></p>
+  </div>
+</div>
 <script>
 "use strict";
 
@@ -700,13 +711,58 @@ async function loadExams() {
 
   const exams = data || [];
   $("statExams").textContent = exams.length;
+
   $("examList").innerHTML = exams.length
     ? exams.map(exam => `
       <div class="qcard">
         <b>${esc(currentLang === "ar" && exam.title_ar ? exam.title_ar : exam.title_en)}</b>
         <p class="muted small">${esc(exam.duration_minutes)} minutes · ${esc(exam.total_questions ?? 0)} questions</p>
+        ${isAdmin ? `<button class="btn primary" type="button" data-manage-exam="${esc(exam.id)}">Manage Questions</button>` : ""}
       </div>`).join("")
     : '<div class="empty">No published exams yet.</div>';
+
+  document.querySelectorAll("[data-manage-exam]").forEach(button => {
+    button.addEventListener("click", () => {
+      openExamQuestions(button.dataset.manageExam);
+    });
+  });
+}async function openExamQuestions(examId) {
+  $("manageExamId").value = examId;
+  $("examQuestionsMsg").textContent = "Loading questions...";
+  openModal("examQuestionsModal");
+
+  const { data: questions, error } = await db.from("questions")
+    .select("id,question_en,question_ar,difficulty,topic")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    $("examQuestionsMsg").textContent = error.message;
+    return;
+  }
+
+  const { data: selected, error: selectedError } = await db.from("exam_questions")
+    .select("question_id")
+    .eq("exam_id", examId);
+
+  if (selectedError) {
+    $("examQuestionsMsg").textContent = selectedError.message;
+    return;
+  }
+
+  const selectedIds = new Set((selected || []).map(item => item.question_id));
+
+  $("examQuestionsList").innerHTML = (questions || []).map(q => `
+    <label class="field">
+      <span>
+        <input type="checkbox" value="${esc(q.id)}" ${selectedIds.has(q.id) ? "checked" : ""}>
+        ${esc(currentLang === "ar" && q.question_ar ? q.question_ar : q.question_en)}
+      </span>
+    </label>
+  `).join("");
+
+  $("examQuestionsMsg").textContent = questions.length
+    ? "Select the questions for this exam."
+    : "No questions available.";
 }
 
 async function loadStats() {
@@ -900,6 +956,44 @@ $("examForm").addEventListener("submit", async event => {
     setTimeout(() => closeModal("examModal"), 900);
   } catch (error) {
     message("examMsg", error.message || "Could not create exam.");
+  } finally {
+    saveButton.disabled = false;
+  }
+});  $("saveExamQuestionsBtn").addEventListener("click", async () => {
+  if (!isAdmin || !currentUser) return;
+
+  const examId = $("manageExamId").value;
+  const selectedIds = Array.from(
+    $("examQuestionsList").querySelectorAll('input[type="checkbox"]:checked')
+  ).map(input => input.value);
+
+  const saveButton = $("saveExamQuestionsBtn");
+  saveButton.disabled = true;
+
+  try {
+    const { error: deleteError } = await db.from("exam_questions")
+      .delete()
+      .eq("exam_id", examId);
+
+    if (deleteError) throw deleteError;
+
+    if (selectedIds.length) {
+      const rows = selectedIds.map((questionId, index) => ({
+        exam_id: examId,
+        question_id: questionId,
+        question_order: index + 1
+      }));
+
+      const { error: insertError } = await db.from("exam_questions")
+        .insert(rows);
+
+      if (insertError) throw insertError;
+    }
+
+    message("examQuestionsMsg", "Questions saved successfully.", true);
+    await loadExams();
+  } catch (error) {
+    message("examQuestionsMsg", error.message || "Could not save questions.");
   } finally {
     saveButton.disabled = false;
   }
